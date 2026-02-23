@@ -106,14 +106,4 @@ seratif2026/
 - TCPDF: untuk PDF generation
 - MySQL
 
-## 📝 Lisensi
-
-[Tentukan lisensi proyek Anda]
-
-## 👥 Kontribusi
-
-Untuk kontribusi, silakan buat pull request atau hubungi tim pengembang.
-
----
-
 **Dibuat dengan ❤️ untuk Seratif 2026**
