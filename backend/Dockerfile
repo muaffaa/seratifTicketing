@@ -14,8 +14,11 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
 
-# Aktifkan mod_rewrite Apache
-RUN a2enmod rewrite
+# Aktifkan mod_rewrite Apache, dan pastikan hanya satu MPM yang aktif (fix: AH00534)
+RUN a2dismod mpm_event mpm_worker || true \
+    && a2enmod mpm_prefork \
+    && a2enmod rewrite \
+    && apachectl configtest
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -32,8 +35,8 @@ RUN composer install --no-dev --optimize-autoloader
 # PENTING (Railway): Ubah port Apache default (80) menjadi nilai environment variable PORT
 # Default PORT pada environment Railway otomatis disediakan
 ENV PORT 8080
-RUN sed -i 's/Listen 80/Listen ${PORT}/g' /etc/apache2/ports.conf \
-    && sed -i 's/:80/:${PORT}/g' /etc/apache2/sites-available/000-default.conf
+RUN sed -i "s/Listen 80/Listen ${PORT}/g" /etc/apache2/ports.conf \
+    && sed -i "s/:80/:${PORT}/g" /etc/apache2/sites-available/000-default.conf
 
 # Set permission yang benar untuk folder uploads supaya PHP bisa save file/gambar
 RUN mkdir -p /var/www/html/uploads/payments \
