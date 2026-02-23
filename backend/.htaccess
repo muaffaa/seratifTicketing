@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Izinkan Authorization Header dilewatkan ke PHP (penting untuk API/JWT jika dipakai)
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Jika file atau direktori nyata ada, layani langsung
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Jika tidak, arahkan semua request ke index.php
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>

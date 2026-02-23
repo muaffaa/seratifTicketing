@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+@theme {
+  --color-seratif-950: #0a1628;
+  --color-seratif-900: #0f172a;
+  --color-seratif-800: #1e3a8a;
+  --color-seratif-700: #1d4ed8;
+  --color-seratif-600: #2563eb;
+  --color-seratif-500: #3b82f6;
+  --color-seratif-400: #60a5fa;
+  --color-seratif-300: #93c5fd;
+  --color-seratif-200: #bfdbfe;
+  --color-seratif-100: #dbeafe;
+  --color-seratif-50:  #eff6ff;
+  --color-sky-accent:  #38bdf8;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+}
+
+/* Islamic geometric pattern SVG background utility */
+.geometric-bg {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%231e3a8a' stroke-width='0.4' stroke-opacity='0.12'%3E%3Cpolygon points='30,5 55,20 55,40 30,55 5,40 5,20'/%3E%3Cpolygon points='30,12 48,22 48,38 30,48 12,38 12,22'/%3E%3Cline x1='30' y1='5' x2='30' y2='12'/%3E%3Cline x1='55' y1='20' x2='48' y2='22'/%3E%3Cline x1='55' y1='40' x2='48' y2='38'/%3E%3Cline x1='30' y1='55' x2='30' y2='48'/%3E%3Cline x1='5' y1='40' x2='12' y2='38'/%3E%3Cline x1='5' y1='20' x2='12' y2='22'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.hero-gradient {
+  background: linear-gradient(135deg, #0a1628 0%, #1e3a8a 45%, #1d4ed8 80%, #0369a1 100%);
+}
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #1e3a8a; border-radius: 3px; }
+
+/* Animations for Validate page */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-in;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.5s ease-out;
+}
+
+
+/* Input focus ring */
+.input-seratif {
+  @apply w-full px-4 py-3 rounded-xl border border-seratif-200 bg-white text-seratif-900 
+         placeholder-slate-400 text-sm transition-all duration-200
+         focus:outline-none focus:ring-2 focus:ring-seratif-500 focus:border-transparent;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl
+         bg-seratif-700 hover:bg-seratif-800 text-white font-medium text-sm
+         transition-all duration-200 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl
+         border-2 border-seratif-700 text-seratif-700 hover:bg-seratif-50 font-medium text-sm
+         transition-all duration-200 active:scale-95;
+}
+
+.card {
+  @apply bg-white rounded-2xl shadow-sm border border-slate-100 p-6;
+}
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease forwards;
+}
+.animate-delay-100 { animation-delay: 0.1s; opacity: 0; }
+.animate-delay-200 { animation-delay: 0.2s; opacity: 0; }
+.animate-delay-300 { animation-delay: 0.3s; opacity: 0; }
+.animate-delay-400 { animation-delay: 0.4s; opacity: 0; }
+.animate-delay-500 { animation-delay: 0.5s; opacity: 0; }

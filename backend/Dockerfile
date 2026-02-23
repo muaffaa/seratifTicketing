@@ -1,0 +1,41 @@
+FROM php:8.2-apache
+
+# Install dependencies OS dan PHP extensions yang dibutuhkan (GD untuk QR/PDF, PDO untuk DB)
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Konfigurasi GD dan install ekstensinya
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
+
+# Aktifkan mod_rewrite Apache
+RUN a2enmod rewrite
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory ke htdocs Apache
+WORKDIR /var/www/html
+
+# Copy semua file backend
+COPY . /var/www/html/
+
+# Install dependencies PHP via Composer
+RUN composer install --no-dev --optimize-autoloader
+
+# PENTING (Railway): Ubah port Apache default (80) menjadi nilai environment variable PORT
+# Default PORT pada environment Railway otomatis disediakan
+ENV PORT 8080
+RUN sed -i 's/Listen 80/Listen ${PORT}/g' /etc/apache2/ports.conf \
+    && sed -i 's/:80/:${PORT}/g' /etc/apache2/sites-available/000-default.conf
+
+# Set permission yang benar untuk folder uploads supaya PHP bisa save file/gambar
+RUN mkdir -p /var/www/html/uploads/payments \
+    && chown -R www-data:www-data /var/www/html/uploads \
+    && chmod -R 777 /var/www/html/uploads

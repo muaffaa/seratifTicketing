@@ -1,0 +1,12 @@
+{
+  "name": "seratif/backend",
+  "description": "SERATIF 2026 Ticketing Backend",
+  "require": {
+    "php": "^8.1",
+    "endroid/qr-code": "^5.0",
+    "tecnickcom/tcpdf": "^6.6"
+  },
+  "autoload": {
+    "psr-4": {}
+  }
+}
