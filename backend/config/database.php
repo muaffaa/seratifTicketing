@@ -1,6 +1,4 @@
 <?php
-// backend/config/database.php
-
 declare(strict_types=1);
 
 class Database
@@ -13,13 +11,23 @@ class Database
             return self::$instance;
         }
 
-        $host    = getenv('DB_HOST')    ?: 'localhost';
-        $dbname  = getenv('DB_NAME')    ?: 'seratif2026';
-        $user    = getenv('DB_USER')    ?: 'root';
-        $pass    = getenv('DB_PASS')    ?: 'admin123';
+        $host    = getenv('MYSQLHOST');
+        $dbname  = getenv('MYSQLDATABASE') ?: 'railway';
+        $user    = getenv('MYSQLUSER');
+        $pass    = getenv('MYSQLPASSWORD');
+        $port    = getenv('MYSQLPORT') ?: '3306';
         $charset = 'utf8mb4';
 
-        $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
+        if (!$host || !$dbname || !$user) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Database environment variables not set.'
+            ]);
+            exit;
+        }
+
+        $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
 
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -31,7 +39,10 @@ class Database
             self::$instance = new PDO($dsn, $user, $pass, $options);
         } catch (PDOException $e) {
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Database connection failed.']);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Database connection failed.'
+            ]);
             exit;
         }
 
