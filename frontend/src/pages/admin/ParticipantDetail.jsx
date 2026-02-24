@@ -11,7 +11,8 @@ export default function ParticipantDetail() {
   useEffect(() => {
     const fetchParticipant = async () => {
       try {
-        const response = await fetch(`/validate/${uuid}`)
+        const apiUrl = import.meta.env.VITE_API_URL || '';
+        const response = await fetch(`${apiUrl}/validate/${uuid}`)
         const result = await response.json()
         setData(result)
         if (!result.success && result.status === 'not_found') {

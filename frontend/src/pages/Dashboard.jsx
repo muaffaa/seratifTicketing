@@ -22,7 +22,8 @@ export default function Dashboard() {
   const fileRef = useRef()
 
   useEffect(() => {
-    fetch('/user/status', { credentials: 'include' })
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    fetch(`${apiUrl}/user/status`, { credentials: 'include' })
       .then(r => r.json())
       .then(data => {
         if (data.success) {
@@ -30,7 +31,7 @@ export default function Dashboard() {
           setPayment(data.payment)
           // Load the saved payment image if it exists
           if (data.payment?.screenshot_path) {
-            setImagePreview('/' + data.payment.screenshot_path)
+            setImagePreview(`${apiUrl}/` + data.payment.screenshot_path)
           }
         }
       })
@@ -47,7 +48,8 @@ export default function Dashboard() {
     fd.append('screenshot', file)
     setUploading(true)
     try {
-      const res = await fetch('/upload-payment', {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${apiUrl}/upload-payment`, {
         method: 'POST',
         credentials: 'include',
         body: fd,
@@ -56,7 +58,7 @@ export default function Dashboard() {
       if (data.success) {
         setUploadMsg(data.message)
         // Use server path for persistence, fallback to blob URL for immediate preview
-        setImagePreview('/' + (data.screenshot_path || URL.createObjectURL(file)))
+        setImagePreview(`${apiUrl}/` + (data.screenshot_path || URL.createObjectURL(file)))
         setPayment({ status: 'pending', created_at: new Date().toISOString() })
       } else {
         setUploadErr(data.message || 'Upload gagal.')
@@ -105,9 +107,9 @@ export default function Dashboard() {
 
         {/* Status card */}
         <div className={`rounded-lg sm:rounded-2xl p-4 sm:p-6 mb-6 border ${paymentStatus === 'approved' ? 'bg-green-50 border-green-200' :
-            paymentStatus === 'pending' ? 'bg-amber-50 border-amber-200' :
-              paymentStatus === 'rejected' ? 'bg-red-50 border-red-200' :
-                'bg-seratif-50 border-seratif-200'
+          paymentStatus === 'pending' ? 'bg-amber-50 border-amber-200' :
+            paymentStatus === 'rejected' ? 'bg-red-50 border-red-200' :
+              'bg-seratif-50 border-seratif-200'
           }`}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             <div>

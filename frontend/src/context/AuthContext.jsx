@@ -3,25 +3,26 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser]         = useState(null)
-  const [admin, setAdmin]       = useState(null)
-  const [loading, setLoading]   = useState(true)
+  const [user, setUser] = useState(null)
+  const [admin, setAdmin] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   const checkUserSession = useCallback(async () => {
     try {
-      const res = await fetch('/user/status', { credentials: 'include' })
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${apiUrl}/user/status`, { credentials: 'include' })
       if (res.ok) {
         const data = await res.json()
         if (data.success) setUser(data.user)
       }
-    } catch {}
+    } catch { }
   }, [])
 
   useEffect(() => {
     // Restore from localStorage flags (session cookies handled by browser)
-    const storedUser  = localStorage.getItem('seratif_user')
+    const storedUser = localStorage.getItem('seratif_user')
     const storedAdmin = localStorage.getItem('seratif_admin')
-    if (storedUser)  setUser(JSON.parse(storedUser))
+    if (storedUser) setUser(JSON.parse(storedUser))
     if (storedAdmin) setAdmin(JSON.parse(storedAdmin))
     setLoading(false)
   }, [])
@@ -32,7 +33,8 @@ export function AuthProvider({ children }) {
   }
 
   const logout = async () => {
-    await fetch('/auth/logout', { method: 'POST', credentials: 'include' })
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    await fetch(`${apiUrl}/auth/logout`, { method: 'POST', credentials: 'include' })
     setUser(null)
     localStorage.removeItem('seratif_user')
   }

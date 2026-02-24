@@ -15,14 +15,14 @@ export default function Register() {
 
   const validate = () => {
     const e = {}
-    if (!form.full_name.trim())      e.full_name = 'Nama lengkap wajib diisi.'
-    if (!form.email.trim())          e.email = 'Email wajib diisi.'
+    if (!form.full_name.trim()) e.full_name = 'Nama lengkap wajib diisi.'
+    if (!form.email.trim()) e.email = 'Email wajib diisi.'
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Format email tidak valid.'
-    if (form.password.length < 8)    e.password = 'Minimal 8 karakter.'
+    if (form.password.length < 8) e.password = 'Minimal 8 karakter.'
     if (form.password !== form.confirm_password) e.confirm_password = 'Konfirmasi password tidak cocok.'
-    if (!form.phone_number.trim())   e.phone_number = 'Nomor HP wajib diisi.'
-    if (!form.address.trim())        e.address = 'Alamat wajib diisi.'
-    if (!form.school_origin.trim())  e.school_origin = 'Asal sekolah/instansi wajib diisi.'
+    if (!form.phone_number.trim()) e.phone_number = 'Nomor HP wajib diisi.'
+    if (!form.address.trim()) e.address = 'Alamat wajib diisi.'
+    if (!form.school_origin.trim()) e.school_origin = 'Asal sekolah/instansi wajib diisi.'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -33,16 +33,17 @@ export default function Register() {
     if (!validate()) return
     setLoading(true)
     try {
-      const res = await fetch('/auth/register', {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${apiUrl}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          full_name:     form.full_name,
-          email:         form.email,
-          password:      form.password,
-          phone_number:  form.phone_number,
-          address:       form.address,
+          full_name: form.full_name,
+          email: form.email,
+          password: form.password,
+          phone_number: form.phone_number,
+          address: form.address,
           school_origin: form.school_origin,
         }),
       })
@@ -63,9 +64,9 @@ export default function Register() {
     <div className="min-h-screen bg-[#f8fafc] flex">
       {/* Left panel - IMAGE */}
       <div className="hidden lg:flex flex-col justify-center items-center w-2/5 bg-linear-to-br from-seratif-900 to-seratif-800 p-12 overflow-hidden relative">
-        <img 
-          src="/images/a9067dc0-c0e0-4f43-b3c9-5476581ba579.jpeg" 
-          alt="Register" 
+        <img
+          src="/images/a9067dc0-c0e0-4f43-b3c9-5476581ba579.jpeg"
+          alt="Register"
           className="absolute inset-0 w-full h-full object-cover opacity-90 blur-sm"
         />
         <div className="absolute inset-0 bg-seratif-900/40" />

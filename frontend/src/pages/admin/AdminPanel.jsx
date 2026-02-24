@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
 const STATUS_BADGE = {
-  pending:  'bg-amber-100 text-amber-700',
+  pending: 'bg-amber-100 text-amber-700',
   approved: 'bg-green-100 text-green-700',
   rejected: 'bg-red-100 text-red-700',
 }
@@ -12,15 +12,16 @@ export default function AdminPanel() {
   const { admin, adminLogout } = useAuth()
   const navigate = useNavigate()
   const [payments, setPayments] = useState([])
-  const [loading, setLoading]   = useState(true)
-  const [filter, setFilter]     = useState('all')
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState('all')
   const [processing, setProcessing] = useState(null)
-  const [viewImg, setViewImg]   = useState(null)
+  const [viewImg, setViewImg] = useState(null)
 
   const fetchPayments = async () => {
     setLoading(true)
     try {
-      const res  = await fetch('/admin/payments', { credentials: 'include' })
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${apiUrl}/admin/payments`, { credentials: 'include' })
       const data = await res.json()
       if (data.success) setPayments(data.data)
     } finally {
@@ -33,7 +34,8 @@ export default function AdminPanel() {
   const handleAction = async (paymentId, action) => {
     setProcessing(paymentId + action)
     try {
-      const res = await fetch('/admin/approve', {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${apiUrl}/admin/approve`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -60,8 +62,8 @@ export default function AdminPanel() {
   const filtered = filter === 'all' ? payments : payments.filter(p => p.status === filter)
 
   const counts = {
-    all:      payments.length,
-    pending:  payments.filter(p => p.status === 'pending').length,
+    all: payments.length,
+    pending: payments.filter(p => p.status === 'pending').length,
     approved: payments.filter(p => p.status === 'approved').length,
     rejected: payments.filter(p => p.status === 'rejected').length,
   }
@@ -100,10 +102,10 @@ export default function AdminPanel() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { key: 'all',      label: 'Total',        color: 'text-seratif-700 bg-seratif-50 border-seratif-200' },
-            { key: 'pending',  label: 'Menunggu',     color: 'text-amber-700 bg-amber-50 border-amber-200' },
-            { key: 'approved', label: 'Disetujui',    color: 'text-green-700 bg-green-50 border-green-200' },
-            { key: 'rejected', label: 'Ditolak',      color: 'text-red-700 bg-red-50 border-red-200' },
+            { key: 'all', label: 'Total', color: 'text-seratif-700 bg-seratif-50 border-seratif-200' },
+            { key: 'pending', label: 'Menunggu', color: 'text-amber-700 bg-amber-50 border-amber-200' },
+            { key: 'approved', label: 'Disetujui', color: 'text-green-700 bg-green-50 border-green-200' },
+            { key: 'rejected', label: 'Ditolak', color: 'text-red-700 bg-red-50 border-red-200' },
           ].map(s => (
             <button key={s.key}
               onClick={() => setFilter(s.key)}
@@ -148,7 +150,10 @@ export default function AdminPanel() {
                       <td className="px-4 py-3 text-slate-600 text-xs">{p.school_origin}</td>
                       <td className="px-4 py-3">
                         <button
-                          onClick={() => setViewImg(`/${p.screenshot_path}`)}
+                          onClick={() => {
+                            const apiUrl = import.meta.env.VITE_API_URL || '';
+                            setViewImg(`${apiUrl}/${p.screenshot_path}`);
+                          }}
                           className="text-seratif-600 hover:underline text-xs flex items-center gap-1">
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -163,7 +168,7 @@ export default function AdminPanel() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-xs text-slate-400">
-                        {new Date(p.created_at).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' })}
+                        {new Date(p.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </td>
                       <td className="px-4 py-3">
                         {p.status === 'pending' ? (
