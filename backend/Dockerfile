@@ -12,11 +12,7 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
 
-# FIX MPM: Gunakan command bawaan Apache agar lebih bersih dan aman
-RUN a2dismod mpm_event mpm_worker || true \
-    && a2enmod mpm_prefork
-
-# Aktifkan mod_rewrite
+# Aktifkan mod_rewrite untuk .htaccess API-mu
 RUN a2enmod rewrite
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -31,8 +27,13 @@ RUN mkdir -p /var/www/html/uploads/payments \
     && chown -R www-data:www-data /var/www/html/uploads \
     && chmod -R 775 /var/www/html/uploads
 
-# FIX PORT & START: Eksekusi perubahan port saat container *berjalan* (runtime)
-# Ini wajib pakai CMD agar dieksekusi saat Railway sudah memberikan angka $PORT
-CMD sed -i "s/Listen 80/Listen ${PORT}/g" /etc/apache2/ports.conf \
+# ==========================================================
+# FIX FINAL: Lakukan pembersihan MPM dan ganti Port di CMD (Runtime)
+# Menggunakan "rm -f" agar aman dan tidak menggagalkan proses boot
+# ==========================================================
+CMD rm -f /etc/apache2/mods-enabled/mpm_event.load \
+    && rm -f /etc/apache2/mods-enabled/mpm_worker.load \
+    && a2enmod mpm_prefork \
+    && sed -i "s/Listen 80/Listen ${PORT}/g" /etc/apache2/ports.conf \
     && sed -i "s/:80/:${PORT}/g" /etc/apache2/sites-available/000-default.conf \
     && apache2-foreground
