@@ -12,12 +12,16 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
 
-# Aktifkan mod_rewrite saja (tanpa sentuh MPM)
+# FIX: Nonaktifkan semua MPM kecuali mpm_prefork
+RUN a2dismod mpm_event mpm_worker && a2enmod mpm_prefork
+
+# Aktifkan mod_rewrite
 RUN a2enmod rewrite
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
+
 COPY . /var/www/html/
 
 RUN composer install --no-dev --optimize-autoloader
