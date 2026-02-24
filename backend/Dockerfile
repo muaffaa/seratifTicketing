@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
 
-# Aktifkan mod_rewrite untuk API
+# Aktifkan mod_rewrite
 RUN a2enmod rewrite
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -27,11 +27,12 @@ RUN mkdir -p /var/www/html/uploads/payments \
     && chown -R www-data:www-data /var/www/html/uploads \
     && chmod -R 775 /var/www/html/uploads
 
-# ==========================================================
-# FIX FINAL: Eksekusi command dalam 1 baris shell (sh -c)
-# 1. Bersihkan modul MPM yang bentrok secara resmi (a2dismod)
-# 2. Aktifkan mpm_prefork (a2enmod)
-# 3. Ubah port ke $PORT Railway
-# 4. Jalankan Apache
-# ==========================================================
-CMD ["sh", "-c", "a2dismod mpm_event mpm_worker || true; a2enmod mpm_prefork || true; sed -i \"s/Listen 80/Listen ${PORT}/g\" /etc/apache2/ports.conf; sed -i \"s/:80/:${PORT}/g\" /etc/apache2/sites-available/000-default.conf; apache2-foreground"]
+# --- BAGIAN PENTING ---
+# Copy script entrypoint yang baru kita buat
+COPY docker-entrypoint.sh /usr/local/bin/
+
+# Berikan izin eksekusi ke script tersebut
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Gunakan script ini sebagai pintu masuk container
+ENTRYPOINT ["docker-entrypoint.sh"]
