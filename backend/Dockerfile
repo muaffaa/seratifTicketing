@@ -12,8 +12,11 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
 
-# FIX: Nonaktifkan semua MPM kecuali mpm_prefork
-RUN a2dismod mpm_event mpm_worker && a2enmod mpm_prefork
+# FIX: Hapus semua MPM, cleanup, lalu load ulang hanya mpm_prefork
+RUN rm -f /etc/apache2/mods-enabled/mpm_*.load \
+    && rm -f /etc/apache2/mods-enabled/mpm_*.conf \
+    && ln -s /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/mpm_prefork.load \
+    && ln -s /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
 
 # Aktifkan mod_rewrite
 RUN a2enmod rewrite
