@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Get PORT from Railway environment (default 8080)
 export PORT="${PORT:-8080}"
@@ -13,6 +14,21 @@ sed -i "s/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/g" /etc/apache2/sites-avai
 if ! grep -q "^ServerName" /etc/apache2/apache2.conf; then
     echo "ServerName localhost" >> /etc/apache2/apache2.conf
 fi
+
+# =========================================================
+# FIX MPM CONFLICTS (PENTING: JANGAN DIHAPUS)
+# =========================================================
+echo "Fixing MPM Configuration..."
+# Hapus paksa konfigurasi mpm_event dan mpm_worker yang bikin crash
+rm -f /etc/apache2/mods-enabled/mpm_event.load
+rm -f /etc/apache2/mods-enabled/mpm_event.conf
+rm -f /etc/apache2/mods-enabled/mpm_worker.load
+rm -f /etc/apache2/mods-enabled/mpm_worker.conf
+
+# Pastikan hanya mpm_prefork yang aktif (Wajib untuk PHP)
+a2dismod mpm_event mpm_worker 2>/dev/null || true
+a2enmod mpm_prefork
+# =========================================================
 
 # Setup directories and permissions
 mkdir -p /var/www/html/uploads/payments
