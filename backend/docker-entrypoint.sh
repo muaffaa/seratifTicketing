@@ -12,6 +12,9 @@ echo "--> Using PORT: $PORT"
 # 2. Update Apache configuration untuk listen ke port yang benar
 echo "--> Configuring Apache to listen on port $PORT..."
 
+# Set ServerName untuk suppress warning AH00558
+echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 # Update ports.conf - ganti semua Listen directive
 sed -i "s/Listen .*/Listen $PORT/g" /etc/apache2/ports.conf
 
