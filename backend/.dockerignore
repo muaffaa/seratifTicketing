@@ -1,0 +1,29 @@
+# Git
+.git
+.gitignore
+
+# Development files
+*.md
+README.md
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (will be empty, let the app create it)
+uploads/
+
+# Database
+database/
+
+# Frontend (separate deployment)
+frontend/
+
+# Local config
+start-backend.sh
