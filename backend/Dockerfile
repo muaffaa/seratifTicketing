@@ -18,6 +18,7 @@ RUN rm -f /etc/apache2/mods-enabled/mpm_*.load \
     && ln -s /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/mpm_prefork.load \
     && ln -s /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
 
+
 # Aktifkan mod_rewrite
 RUN a2enmod rewrite
 
@@ -32,3 +33,9 @@ RUN composer install --no-dev --optimize-autoloader
 RUN mkdir -p /var/www/html/uploads/payments \
     && chown -R www-data:www-data /var/www/html/uploads \
     && chmod -R 775 /var/www/html/uploads
+
+# Ubah port Apache default (80) menjadi port dinamis dari Railway ($PORT)
+RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
+
+# Jalankan Apache di foreground
+CMD ["apache2-foreground"]
