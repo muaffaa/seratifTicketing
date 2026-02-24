@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
 
-# Aktifkan mod_rewrite untuk .htaccess API-mu
+# Aktifkan mod_rewrite untuk API
 RUN a2enmod rewrite
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -28,12 +28,10 @@ RUN mkdir -p /var/www/html/uploads/payments \
     && chmod -R 775 /var/www/html/uploads
 
 # ==========================================================
-# FIX FINAL: Lakukan pembersihan MPM dan ganti Port di CMD (Runtime)
-# Menggunakan "rm -f" agar aman dan tidak menggagalkan proses boot
+# FIX FINAL: Eksekusi command dalam 1 baris shell (sh -c)
+# 1. Bersihkan modul MPM yang bentrok secara resmi (a2dismod)
+# 2. Aktifkan mpm_prefork (a2enmod)
+# 3. Ubah port ke $PORT Railway
+# 4. Jalankan Apache
 # ==========================================================
-CMD rm -f /etc/apache2/mods-enabled/mpm_event.load \
-    && rm -f /etc/apache2/mods-enabled/mpm_worker.load \
-    && a2enmod mpm_prefork \
-    && sed -i "s/Listen 80/Listen ${PORT}/g" /etc/apache2/ports.conf \
-    && sed -i "s/:80/:${PORT}/g" /etc/apache2/sites-available/000-default.conf \
-    && apache2-foreground
+CMD ["sh", "-c", "a2dismod mpm_event mpm_worker || true; a2enmod mpm_prefork || true; sed -i \"s/Listen 80/Listen ${PORT}/g\" /etc/apache2/ports.conf; sed -i \"s/:80/:${PORT}/g\" /etc/apache2/sites-available/000-default.conf; apache2-foreground"]
