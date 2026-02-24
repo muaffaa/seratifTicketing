@@ -68,6 +68,17 @@ if (isset($routes[$method][$uri])) {
     exit;
 }
 
+// Handle root path - health check endpoint
+if ($uri === '/' || $uri === '') {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => true,
+        'message' => 'SERATIF Ticketing API is running',
+        'timestamp' => date('c')
+    ]);
+    exit;
+}
+
 // 404
 header('Content-Type: application/json');
 http_response_code(404);
