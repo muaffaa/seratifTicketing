@@ -25,22 +25,22 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy application files
-COPY . /var/www/html/
+# Copy backend application files
+COPY backend/ /var/www/html/
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
 # Create uploads directory with proper permissions
-RUN mkdir -p /var/www/html/uploads/payments \
-    && chown -R www-data:www-data /var/www/html/uploads \
-    && chmod -R 775 /var/www/html/uploads
+RUN mkdir -p /var/www/uploads/payments \
+    && chown -R www-data:www-data /var/www/uploads \
+    && chmod -R 775 /var/www/uploads
 
 # Configure Apache to allow .htaccess overrides
-RUN sed -i 's/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 # Copy the entrypoint script
-COPY docker-entrypoint.sh /usr/local/bin/
+COPY backend/docker-entrypoint.sh /usr/local/bin/
 
 # Fix line endings (prevent Windows formatting error) & make executable
 RUN dos2unix /usr/local/bin/docker-entrypoint.sh && \

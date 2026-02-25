@@ -91,6 +91,11 @@ seratif2026/
 - `GET /admin/payments` - Daftar pembayaran
 - `GET /admin/login` - Halaman login admin
 
+
+## 🚂 Deploy ke Railway
+
+Untuk panduan langkah demi langkah (backend + frontend + database), lihat: **`RAILWAY_DEPLOY_GUIDE.md`**.
+
 ## 🎨 Stack Teknologi
 
 ### Frontend

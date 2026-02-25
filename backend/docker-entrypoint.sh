@@ -31,10 +31,11 @@ a2enmod mpm_prefork
 # =========================================================
 
 # Setup directories and permissions
-mkdir -p /var/www/html/uploads/payments
+mkdir -p /var/www/uploads/payments
 chown -R www-data:www-data /var/www/html
 chmod -R 755 /var/www/html
-chmod -R 775 /var/www/html/uploads/payments
+chown -R www-data:www-data /var/www/uploads
+chmod -R 775 /var/www/uploads/payments
 
 echo "Starting Apache on port $PORT..."
 

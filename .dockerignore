@@ -1,0 +1,21 @@
+# VCS
+.git
+.gitignore
+
+# Node / frontend artifacts not needed by backend image
+frontend/node_modules
+frontend/dist
+
+# Local runtime artifacts
+frontend/.vite
+backend/vendor
+uploads
+
+# IDE / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Docs
+*.md
